@@ -17,7 +17,7 @@ using AliasTables
 md"
 # Simulating quantum systems on a classical computer
 
-![always_has_been.jpg]()
+![](https://imgflip.com/a0x452.jpg)
 
 We now want to take an in-depth look at how we can represent & simulate an ensemble of quantum objects on a classical computer. For simplicity, we'll work with so-called *two level systems* -- these are quantum systems in which the individual objects in the ensemble have two possible states, which for convenience we'll write as $|0\rangle$ and $|1\rangle$. You can probably see why this is a reasonable restriction to make, and why it simplifies our lives as classical programmers, although in reality nature isn't so simple. In fact, a lot of work goes into finding real-world systems that we can use as successful models of two-level systems, and a huge amount of the problem of building real-world quantum computers involves preventing the hardware from \"leaking\" into other accessible states besides the ones we've designated $|0\rangle$ and $|1\rangle$. All this is to say that the real world is more complex than the somewhat cartoonish picture we'll paint here.
 "
@@ -28,10 +28,11 @@ md"
 
 Any physical system governed by the laws of quantum mechanics has a **discrete** (or *quantized*) set of possible states that its constituent particles can occupy. A common example is the orbitals of the hydrogen atom, pictured below:
 
-![HAtomOrbitals.png]()
+![](https://upload.wikimedia.org/wikipedia/commons/c/cf/HAtomOrbitals.png)
 
+The single electron of a hydrogen atom can occupy any of these orbitals, but they are all orthonormal to one another and have different energies associated with each.
 
-These states form an orthonormal basis of some vector space. Then, we can remind ourselves that linear operators act on vector spaces to map vectors from one to another. In the physical world, various physical interactions can move a quantum object from one of these states to another, driving transitions from $|0\rangle \to |1\rangle$ or vice-versa (an example of this would be a particle absorbing then emitting a photon). We can represent these interactions as *linear operators*, which map $\mathbb{C}^2 \to \mathbb{C}^2$. Additionally, there are a few other conditions:
+These quantum states form an orthonormal basis of some vector space. Then, we can remind ourselves that linear operators act on vector spaces to map vectors from one to another. In the physical world, various physical interactions can move a quantum object from one of these states to another, driving transitions from $|0\rangle \to |1\rangle$ or vice-versa (an example of this would be a particle absorbing then emitting a photon). We can represent these interactions as *linear operators*, which map $\mathbb{C}^2 \to \mathbb{C}^2$. Additionally, there are a few other conditions:
 
 - These operators must be *norm-preserving*, that is, any vector operated upon by such an operator has its 2-norm preserved
 - These operators are *unitary* (connected to the above), so that for some operator $U$, $U \times U^\dagger = \mathbb{I}$.
@@ -1171,8 +1172,8 @@ version = "5.11.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╟─b3c619ca-657c-11f0-31b8-7db9d45d291d
-# ╠═9ae17620-14a3-4578-ad60-0ea60665c6eb
+# ╠═b3c619ca-657c-11f0-31b8-7db9d45d291d
+# ╟─9ae17620-14a3-4578-ad60-0ea60665c6eb
 # ╟─50fd912f-72cf-47da-ac9d-8144f1c64bc0
 # ╟─0e75d215-358a-4871-aeb7-43f2ec78eed9
 # ╠═835e5f0f-44a7-4b47-b439-802224b6f915
