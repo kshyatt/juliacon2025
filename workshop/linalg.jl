@@ -26,10 +26,12 @@ We now want to take an in-depth look at how we can represent & simulate an ensem
 md"
 ## What actually are these $|0\rangle$ and $|1\rangle$ states?
 
-Any physical system 
+Any physical system governed by the laws of quantum mechanics has a **discrete** (or *quantized*) set of possible states that its constituent particles can occupy. A common example is the orbitals of the hydrogen atom, pictured below:
+
+![HAtomOrbitals.png]()
 
 
-so these states form an orthonormal basis of some vector space. Then, we can remind ourselves that linear operators act on vector spaces to map vectors from one to another. In the physical world, various physical interactions can move a quantum object from one of these states to another, driving transitions from $|0\rangle \to |1\rangle$ or vice-versa (an example of this would be a particle absorbing then emitting a photon). We can represent these interactions as *linear operators*, which map $\mathbb{C}^2 \to \mathbb{C}^2$. Additionally, there are a few other conditions:
+These states form an orthonormal basis of some vector space. Then, we can remind ourselves that linear operators act on vector spaces to map vectors from one to another. In the physical world, various physical interactions can move a quantum object from one of these states to another, driving transitions from $|0\rangle \to |1\rangle$ or vice-versa (an example of this would be a particle absorbing then emitting a photon). We can represent these interactions as *linear operators*, which map $\mathbb{C}^2 \to \mathbb{C}^2$. Additionally, there are a few other conditions:
 
 - These operators must be *norm-preserving*, that is, any vector operated upon by such an operator has its 2-norm preserved
 - These operators are *unitary* (connected to the above), so that for some operator $U$, $U \times U^\dagger = \mathbb{I}$.
@@ -313,8 +315,6 @@ Now we want a more systematic way to apply (single target) unitaries to arbitrar
 "
 
 # ╔═╡ a953d052-bf60-47b7-90f4-5688d27e8700
-# ╠═╡ disabled = true
-#=╠═╡
 function apply_unitary_kron(ψ::Vector{ComplexF64}, unitary::Matrix{ComplexF64}, unitary_target::Int)
 	n_target  = Int( log2(length(ψ)) )
 	all_gates = [I for qubit in 1:n_qubits]
@@ -322,7 +322,6 @@ function apply_unitary_kron(ψ::Vector{ComplexF64}, unitary::Matrix{ComplexF64},
 	full_gate = ...
 	return full_gate * ψ
 end
-  ╠═╡ =#
 
 # ╔═╡ 9ef8e621-e762-400d-8346-bc4077f872c9
 md"
@@ -360,12 +359,8 @@ How would you modify `apply_unitary_kron` to handle gates on multiple (adjacent)
 """
 
 # ╔═╡ 570df816-54af-4bc5-83ee-ee3028ef407d
-# ╠═╡ disabled = true
-#=╠═╡
 function apply_unitary_kron(ψ::Vector{ComplexF64}, unitary::Matrix{ComplexF64}, unitary_targets::Int...)
-	...
 end
-  ╠═╡ =#
 
 # ╔═╡ 59d71c88-0428-4302-88ab-8867be5f299c
 md" We'll define a couple other common 2-target unitaries now. "
