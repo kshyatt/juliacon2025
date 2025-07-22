@@ -151,6 +151,34 @@ for n = 1:100
 	
 end
 
+# ╔═╡ d0fe352c-7aca-40ee-8648-abff315aa04d
+md"
+## Another orthonormal basis
+
+We already looked at the basis $\ket{0}$ and $\ket{1}$. We can transform this to a new orthonormal basis 
+```math
+\begin{align*}
+\ket{+} =& \frac{1}{\sqrt{2}} \ket{0} + \frac{1}{\sqrt{2}}\ket{1} \\
+\ket{-} =& \frac{1}{\sqrt{2}} \ket{0} - \frac{1}{\sqrt{2}}\ket{1} \\
+\end{align*}
+```
+"
+
+# ╔═╡ 68b4479b-b36a-45f2-9612-f1dae60d5ded
+md"
+## Exercise
+
+Verify that the $\ket{+}$ and $\ket{-}$ states form an orthonormal basis. How would you write these as vectors?
+"
+
+# ╔═╡ d02fd246-b7a6-416e-8ff2-a74a05809b78
+
+
+# ╔═╡ 1c03d3af-1427-4b8d-9101-954e2dd040c0
+md"
+What's the point of this? Just as in the linear algebra we know, change of basis can often make a problem more tractable. Additionally, it reminds us that it's common to use the symbol inside the \"ket\" as a label, and it may in the end describe a very complex continuous function! (This is common in atomic physics, for example). But the notation is general enough to be applied to a lot of quantum systems.
+"
+
 # ╔═╡ 16ac526d-f7ad-4c5c-b9da-049bf87541eb
 md"
 
@@ -223,11 +251,12 @@ Let's look at some density matrices and determine if they represent pure or mixe
 # ╔═╡ 93628d61-0ac8-48a9-b42e-f7ac76f8d397
 
 
-# ╔═╡ c6b4ebb4-5b0e-4faf-85db-e3cc128e1a51
+# ╔═╡ 93c4997d-dbbd-497f-8d2a-355f7821c21a
 md"
-### Applying unitaries to density matrices
 
-### Making measurements and computing expectation values with density matrices
+## Why should we care about any of this if we're not physicists or chemists?
+
+For some problems, exploiting the laws of quantum mechanics in a *fault tolerant* (error corrected) way would allow us to find a solution with polynomial or even exponential speedup. Many of these problems are of large societal or industrial importance, like materials design or scheduling for logistics. This is why quantum computation has attracted a large amount of private and public investment, of course. But the fault-tolerant days are probably a ways off, and in the meantime we can still improve our *classical* algorithms and techniques by benchmarking and comparing them against what quantum hardware can do. For quantum computing to be worthwhile for actual applications, it needs to outperform the classical state of the art, which is a moving and ever-improving target, though of course there are fundamental bounds on the efficiency of simulation of quantum systems with classical hardware. But for now, clever classical algorithm development allows classical resources to outperform today's noisy, small quantum devices. These techniques can be used in other applications as well, where we don't necessarily anticipate a massive speedup from a future fault-tolerant quantum computer.
 "
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -254,6 +283,10 @@ project_hash = "da39a3ee5e6b4b0d3255bfef95601890afd80709"
 # ╟─7796c3ac-da92-4153-9d7c-93c572bf8d30
 # ╟─b96bcce9-4c48-4aeb-a7b9-e3f5668644f2
 # ╠═8a1c9156-a301-4d9b-9fbe-70bfeaf4a5cf
+# ╟─d0fe352c-7aca-40ee-8648-abff315aa04d
+# ╟─68b4479b-b36a-45f2-9612-f1dae60d5ded
+# ╠═d02fd246-b7a6-416e-8ff2-a74a05809b78
+# ╟─1c03d3af-1427-4b8d-9101-954e2dd040c0
 # ╟─16ac526d-f7ad-4c5c-b9da-049bf87541eb
 # ╟─34cac984-761b-45de-a618-29b13039005f
 # ╠═fe171d54-a342-4d7c-9c6d-db2e408435b0
@@ -262,6 +295,6 @@ project_hash = "da39a3ee5e6b4b0d3255bfef95601890afd80709"
 # ╠═ef9b4112-b1e2-40e3-82bb-83d41b2f344e
 # ╠═eec874b2-0532-469d-9689-24ca2ff44386
 # ╠═93628d61-0ac8-48a9-b42e-f7ac76f8d397
-# ╠═c6b4ebb4-5b0e-4faf-85db-e3cc128e1a51
+# ╟─93c4997d-dbbd-497f-8d2a-355f7821c21a
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
