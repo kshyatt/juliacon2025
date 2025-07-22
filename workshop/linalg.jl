@@ -17,7 +17,7 @@ using AliasTables
 md"
 # Simulating quantum systems on a classical computer
 
-![](https://imgflip.com/a0x452.jpg)
+![](https://github.com/kshyatt/juliacon2025/blob/main/workshop/always_has_been.jpg)
 
 We now want to take an in-depth look at how we can represent & simulate an ensemble of quantum objects on a classical computer. For simplicity, we'll work with so-called *two level systems* -- these are quantum systems in which the individual objects in the ensemble have two possible states, which for convenience we'll write as $|0\rangle$ and $|1\rangle$. You can probably see why this is a reasonable restriction to make, and why it simplifies our lives as classical programmers, although in reality nature isn't so simple. In fact, a lot of work goes into finding real-world systems that we can use as successful models of two-level systems, and a huge amount of the problem of building real-world quantum computers involves preventing the hardware from \"leaking\" into other accessible states besides the ones we've designated $|0\rangle$ and $|1\rangle$. All this is to say that the real world is more complex than the somewhat cartoonish picture we'll paint here.
 "
@@ -1069,6 +1069,52 @@ Compare the performance of the naive and alias table functions for:
 What do you notice?
 "
 
+# ╔═╡ c0d9d09b-b7b8-437d-8de7-b7ff3c8d51c8
+md"
+## Advanced exercises
+
+Some common circuits we can test performance with are those that prepare [GHZ](https://en.wikipedia.org/wiki/Greenberger%E2%80%93Horne%E2%80%93Zeilinger_state), or \"cat\" states, and [Quantum Fourier Transforms](https://en.wikipedia.org/wiki/Quantum_Fourier_transform). \"Cat\" states are named after Schroedinger's cat, and are either \"all 0\" or \"all 1\",
+
+```math
+\ket{\psi_{GHZ}} = \frac{1}{\sqrt{2}}\ket{00\ldots00} + \frac{1}{\sqrt{2}}\ket{11\ldots11}
+```
+
+A circuit to prepare this state vector is:
+```julia
+ghz_ops = [H(0)] # apply Hadamard to qubit 0
+for ii in 0:num_qubits-2
+    push!(ghz_ops, CNot(ii, ii+1))
+end
+```
+
+This uses the `CNot` gate introduced above.
+
+The quantum Fourier transform can be implemented as:
+
+```julia
+qft_ops = []
+for target_qubit = 0:qubit_count-1 
+    angle = π / 2 
+    push!(qft_ops, H(target_qubit)) # apply Hadamard to target_qubit
+    for control_qubit = target_qubit+1:qubit_count-1 
+        push!(qft_ops, CPhaseShift(angle, control_qubit, target_qubit)) 
+        angle /= 2 
+    end
+end
+```
+And then applying all the operations to an initial state vector. The `CPhaseShift` gate is new to us, and takes an angle argument. Its form is:
+
+```math
+\mathtt{CPhaseShift}(\theta) = \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & \exp(i\theta) \end{bmatrix}
+```
+
+Can you implement and apply each of these circuits to relatively large (26+ qubits) states in an efficient way, using the code we developed above?
+
+It might also be interesting to examine your state vector after each gate (unitary) application to understand what each application actually does -- for GHZ especially, this shows how you can prepare the cat state iteratively.
+
+**Tip**: for the GHZ state, we should start with a $\ket{\psi} = \ket{0\ldots0}$ which can be represented in memory as $[1, 0, 0, \ldots, 0]$ (only the first element is non-zero).
+"
+
 # ╔═╡ d51cbc39-b060-4f8e-aec9-df7a48c4be8f
 md"
 ## Summary
@@ -1172,7 +1218,7 @@ version = "5.11.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╠═b3c619ca-657c-11f0-31b8-7db9d45d291d
+# ╟─b3c619ca-657c-11f0-31b8-7db9d45d291d
 # ╟─9ae17620-14a3-4578-ad60-0ea60665c6eb
 # ╟─50fd912f-72cf-47da-ac9d-8144f1c64bc0
 # ╟─0e75d215-358a-4871-aeb7-43f2ec78eed9
@@ -1320,6 +1366,7 @@ version = "5.11.0+0"
 # ╠═ee5e6301-817b-40e7-930f-4c436d2d0a7b
 # ╠═ab6259c2-098b-4bcb-bffc-c9038b2952da
 # ╟─8df7ef80-9363-4f01-9f02-7d4d1082e7ff
+# ╟─c0d9d09b-b7b8-437d-8de7-b7ff3c8d51c8
 # ╟─d51cbc39-b060-4f8e-aec9-df7a48c4be8f
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
