@@ -214,7 +214,7 @@ Any density matrix that can be written in this form, as the outer product of a *
 ```math
 \begin{align*}
 \rho_{p} =& \ket{\psi}\bra{\psi} \\
-\rho^2_p =& (\ket{\psi}\bra{\psi}) (\ket{\psi}\bra{psi}) \\
+\rho^2_p =& (\ket{\psi}\bra{\psi}) (\ket{\psi}\bra{\psi}) \\
 =& \ket{\psi} \braket{\psi | \psi} \bra{\psi} \\
 =& \ket{\psi}\bra{\psi} \\
 \end{align*}

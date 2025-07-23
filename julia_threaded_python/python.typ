@@ -50,17 +50,32 @@
 ]
 
 #slide(title: "But " + `juliacall` + " can't protect us from everything")[
+  #cols(columns: (1fr, 1fr), gutter: 2em)[
   - What if you *want* to interact with Python?
   - `juliacall` can't do much if the initial Julia startup enters a deadlock
-  - You have to yield back into the Julia scheduler to allow tasks to run -- if you're not yielding early or often enough, things will hang
-  - How do you know where and how much to yield?
+  - We *must* yield back into the Julia scheduler to allow tasks to run -- if we are not yielding early or often enough, Julia threads *will* hang
+  - How do you know where and how much to yield?][
+  #image("juliacall_docs.png")
+]
 ]
 
-#slide(title: `ThreadPoolExecutor` + " and its many \"features\"")[
-  - Our Julia process may be launched off a *non-main* Python thread, created by a Python `ThreadPoolExecutor`
-  - Even worse, we may not have any control of how that thread is initialized!
-  - This means we cannot guarantee that the needed `juliacall` functions are called when the thread starts, potentially causing a lock
-  - Python libraries may use `ThreadPoolExecutor` to launch workers, and short of making PRs to every Python library on Earth, we can't stop them
+#slide(title: `juliacall` + " may be imported on a non-main thread")[
+  - 3rd party libraries may launch the Julia package's wrapper in ways we can't control
+  - Example scenario: `SomePythonLibrary` creates a `ThreadPoolExecutor` which will manage workers which use the Julia code
+  - When the `ThreadPoolExecutor` is created, an initializer function `initializer` and arguments to it can be provided
+  ```python
+  ThreadPoolExecutor(max_workers=None, thread_name_prefix='', initializer=None, initargs=())
+  ```
+  - `initializer` is run with its `init_args` at the startup of each worker thread
+  - #stress[How do you (politely) ask every 3rd party library to initialize its threads with a yield to the Julia scheduler?] 
+]
+
+
+#slide(title: "Stuck waiting for a " + `yield`)[
+  - Julia internal functions during startup may yield into the task scheduler!
+  - Experimentally, the "stuck waiting to `yield()`" problem seems to occur when `juliacall` is not run on the main Python thread
+  - #stress[Why???] Python experts are welcome to answer this!
+  - Processes, which differ from threads in important ways, can help.
 ]
 
 #slide(title: "Python processes vs threads")[
@@ -98,9 +113,71 @@
     - Or share the Julia manager between them?
 ]
 
-// TODO code slides
-#slide(title: "What does this look like in practice?")[
+#slide(title: "What does this look like in practice? -- Creating the worker")[
+```python
+from multiprocessing.pool import Pool
+__JULIA_POOL__ = None
 
+def setup_pool():
+    # We use a multiprocessing Pool with one worker
+    # in order to bypass the Python GIL. This protects us
+    # when the simulator is used from a non-main thread from another
+    # Python module. However it involves a global, probably horrible...
+    global __JULIA_POOL__
+    __JULIA_POOL__ = Pool(processes=1)
+    __JULIA_POOL__.apply(setup_julia)
+    atexit.register(__JULIA_POOL__.join)
+    atexit.register(__JULIA_POOL__.close)
+    return
+```
+]
+
+#slide(title: "What does this look like in practice? -- Setting up Julia")[
+#show raw: set text(size: 14pt)
+```python
+def setup_julia():
+    import os
+    import sys
+
+    # don't reimport if we don't have to
+    if "juliacall" in sys.modules and hasattr(sys.modules["juliacall"], "Main"):
+        os.environ["PYTHON_JULIACALL_HANDLE_SIGNALS"] = "yes"
+        return
+    else:
+        for k, default in (
+            ("PYTHON_JULIACALL_HANDLE_SIGNALS", "yes"),
+            ("PYTHON_JULIACALL_THREADS", "auto"),
+            ("PYTHON_JULIACALL_OPTLEVEL", "3"),
+            # let the user's Conda/Pip handle installing things
+            ("JULIA_CONDAPKG_BACKEND", "Null"),
+        ):
+            os.environ[k] = os.environ.get(k, default)
+
+        from juliacall import Main as jl # import Julia packages into Main below
+```
+]
+
+#slide(title: "What does this look like in practice? -- Doing useful work")[
+```python
+# can run on any Python thread
+def some_task_runner(*args):
+    global __JULIA_POOL__
+    try:
+        jl_result = __JULIA_POOL__.apply(julia_interface_runner, args)
+    except Exception as e:
+        # translates/unwraps JuliaCall error types to Python 
+        _handle_julia_error(e)
+    # more python result processing occurs here!
+```
+]
+
+#slide(title: "What does this look like in practice? -- Doing useful work")[
+```python
+# runs on the jointly owned process 
+def julia_interface_runner(*args):
+    jl = getattr(sys.modules["juliacall"], "Main")
+    return jl.MyJuliaPackage.run_stuff(args)
+```
 ]
 
 #slide(title: "Sharing memory among Python processes")[
@@ -123,11 +200,48 @@ Nice blog post about this issue
 ]
 ]
 
-#slide(title: "Passing memory back and forth: example")[
-  ```julia
-
-  ```
+#slide(title: "Passing memory back and forth: the Julia side")[
+#show raw: set text(size: 14pt)
+```julia
+const MUST_MMAP = 2^20
+function _mmap_large_result_values(results)
+    to_mmap     = findall(rt->sizeof(rt) > MUST_MMAP, results)
+    isempty(to_mmap) && return nothing, nothing
+    paths_and_lengths = map(to_mmap) do r_ix
+        tmp_path, io = mktemp()
+        write(io, results[r_ix])
+        result_size = length(results[r_ix])
+        empty!(results[r_ix]) # avoid copying back with pickle
+        close(io)
+        return (tmp_path, result_size)
+    end
+    py_paths    = tuple((x->x[1] for x in paths_and_lengths)...)
+    py_lens     = tuple((x->x[2] for x in paths_and_lengths)...)
+    return py_paths, py_lens
+end
+```
 ]
+
+#slide(title: "Passing memory back and forth: the Python side")[
+```python
+def _handle_mmaped_result(result, mmap_paths, obj_lengths):
+    if mmap_paths:
+        mmap_index = 0
+        for result_ind, result_obj in enumerate(result):
+            if not result_obj:
+                d_type = # some logic here! 
+                result[result_ind] = np.memmap(
+                    mmap_paths[mmap_index],
+                    dtype=d_type,
+                    mode="r",
+                    shape=(obj_lengths[mmap_index],),
+                )
+                mmap_index += 1
+    return result
+```
+]
+
+#focus-slide[But this is just so horrible! I hate it!]
 
 #slide(title: "The Global Interpreter Lock ... is going away!")[
   #cols(columns: (2fr, 1fr), gutter: 2em)[

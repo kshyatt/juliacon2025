@@ -120,12 +120,9 @@ Undisable the cells below as necessary -- they're disabled for now to keep the n
 "
 
 # ╔═╡ 44cc8818-fbea-4acd-bbc1-f75fe40d2bed
-# ╠═╡ disabled = true
-#=╠═╡
 # initialize and normalize a random single-particle state vector ψ
 # remember that it should be complex!
 ψ = 
-  ╠═╡ =#
 
 # ╔═╡ e93eb661-234d-49ad-bb61-c09847ca4f33
 md"
@@ -150,19 +147,16 @@ Try applying each of these to your randomly generated ψ above:
 "
 
 # ╔═╡ c9fd46bc-7e59-4b68-9b07-b2fe348d267c
-# ╠═╡ disabled = true
 #=╠═╡
 X*ψ
   ╠═╡ =#
 
 # ╔═╡ 358c25bb-757d-42bb-aff0-ed659ab4f689
-# ╠═╡ disabled = true
 #=╠═╡
 Y*ψ
   ╠═╡ =#
 
 # ╔═╡ 2d143124-266f-4b1a-a6b6-67286b0d2ec4
-# ╠═╡ disabled = true
 #=╠═╡
 Z*ψ
   ╠═╡ =#
@@ -176,7 +170,6 @@ There's also the Hadamard operator:
 H = 1/√2 * ComplexF64.([1 1; 1 -1])
 
 # ╔═╡ 602e3a8d-7387-4ad7-9e3c-03ecf4cde890
-# ╠═╡ disabled = true
 #=╠═╡
 H*ψ
   ╠═╡ =#
@@ -228,10 +221,7 @@ Let's compute the expectation value of this observable:
 "
 
 # ╔═╡ 08726f6b-3f47-49c3-b7a3-3e55e4209a22
-# ╠═╡ disabled = true
-#=╠═╡
 dot(ψ, O1, ψ)
-  ╠═╡ =#
 
 # ╔═╡ e58924e6-7fd6-41d2-9c48-dd839a5c7977
 md"
@@ -345,7 +335,7 @@ md"""
 Let's look a little closer at some multi-target unitaries, such as `SWAP`. As the name implies, this swaps the states between the targets.
 ```math
 \begin{align*}
-\mathrm{SWAP} |\psi_2\rangle &= \mathrm{SWAP}\left(\psi_0 |00\rangle + \psi_1 |01\rangle + \psi_2 |10|rangle + \psi_3|11\rangle\right) \\
+\mathrm{SWAP} |\psi_2\rangle &= \mathrm{SWAP}\left(\psi_0 |00\rangle + \psi_1 |01\rangle + \psi_2 |10\rangle + \psi_3|11\rangle\right) \\
 &= \psi_0 |00 \rangle + \psi_1 |10\rangle + \psi_2 |01\rangle + \psi_3 \rangle \\
 \end{align*}
 ```
@@ -395,8 +385,6 @@ Although, as it happens, Julia's `LinearAlgebra` standard library has a helpful 
 "
 
 # ╔═╡ 3f7a9f08-d9e0-4940-8737-88fbdd4b02c8
-# ╠═╡ disabled = true
-#=╠═╡
 function compute_expval_kron(O::Matrix{ComplexF64}, o_qubit::Int, ψ::Vector{ComplexF64})
 	n_qubits = Int( log2(length(ψ)) )
 	all_observables = [I for qubit in 0:n_qubits - 1]
@@ -404,7 +392,6 @@ function compute_expval_kron(O::Matrix{ComplexF64}, o_qubit::Int, ψ::Vector{Com
 	full_O = ...
 	return dot(ψ, full_O, ψ)
 end
-  ╠═╡ =#
 
 # ╔═╡ 21096cfe-57d4-4a4c-8e81-550bb36b88f1
 md"
@@ -537,8 +524,6 @@ The problem is that we reshaped without *permuting*. As said above, if we simply
 "
 
 # ╔═╡ 67b858fe-c936-4eba-bab8-33eb992368c2
-# ╠═╡ disabled = true
-#=╠═╡
 function apply_unitary_reshaped(ψ::Vector[ComplexF64}, unitary::Matrix{ComplexF64}, unitary_target::Int)
 	n_targets   = Int( log2(length(ψ)) )
 	ψ_reshaped  = reshape(ψ, ntuple(i->2, n_targets))
@@ -555,7 +540,6 @@ function apply_unitary_reshaped(ψ::Vector[ComplexF64}, unitary::Matrix{ComplexF
 	ϕ           = reshape(ψ_reshaped, 2^n_targets)
 	return ϕ
 end
-  ╠═╡ =#
 
 # ╔═╡ 18335cf9-0168-4e70-8206-8adeda8d9f20
 # ϕ_reshaped3 = apply_unitary_reshaped(ψ3, X, 1)
@@ -932,8 +916,6 @@ The $\hat{O}|\psi\rangle$ portion we already have a method for, so let's port it
 "
 
 # ╔═╡ 6aefb4c8-495c-46fe-9ebf-0ec1cf8d8734
-# ╠═╡ disabled = true
-#=╠═╡
 function compute_expval_shifting(O::Matrix{ComplexF64}, o_target::Int, ψ::Vector{ComplexF64})
 	n_particles  = Int( log2(length(ψ)) )
 	temp_results = zeros(Float64, Threads.nthreads())
@@ -951,7 +933,6 @@ function compute_expval_shifting(O::Matrix{ComplexF64}, o_target::Int, ψ::Vecto
 	end
 	return sum(temp_results)
 end
-  ╠═╡ =#
 
 # ╔═╡ b523f793-4e9f-4b39-a103-e3b21f9430c9
 md"
@@ -1027,8 +1008,6 @@ Assuming $|\psi\rangle$ is normalized. A common and simple approach to sampling 
 "
 
 # ╔═╡ 15f83daa-718c-40d4-8acb-8a70453bbbb8
-# ╠═╡ disabled = true
-#=╠═╡
 function naive_sample(ψ::Vector{ComplexF64}, n_shots::Int)
 	probabilities = abs2.(ψ)
 	summed_p = ...
@@ -1037,7 +1016,6 @@ function naive_sample(ψ::Vector{ComplexF64}, n_shots::Int)
 	end
 	return shots
 end
-  ╠═╡ =#
 
 # ╔═╡ d350febc-1950-4cc2-9d66-a4951b8d50a6
 md"
@@ -1325,7 +1303,7 @@ version = "5.11.0+0"
 # ╠═5bc1beb8-8cf0-4d68-b8fd-2cd91429b86c
 # ╠═bea8e5ba-55f9-4665-a8fa-3bb2dbcf87b6
 # ╠═179c9b82-f5ed-4528-aa27-915f695e5824
-# ╠═8e8c54e3-2d76-49ed-994a-55f77432c892
+# ╟─8e8c54e3-2d76-49ed-994a-55f77432c892
 # ╠═af3a39ae-4951-4fd4-96aa-9bcf396c548b
 # ╟─8fbb3671-2860-4004-a8eb-7e4464dfb4d3
 # ╠═6177482d-5078-4137-8045-dd0f08f06e92
