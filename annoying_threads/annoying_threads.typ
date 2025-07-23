@@ -16,14 +16,15 @@
 #slide(title: "First, good things about Julia threads")[
   - Dynamic threading and task migration mostly "just work"
   - Really nice support for atomics
-  - Interaction with `Channel`s promotes good designs
+  - Interaction with `Channel`s promotes good design
   - Don't have to use macros to do everything
+  - We've had "good enough" coarse-graining for a while!
 ]
 
 #focus-slide[But there are some pain points]
 
 #slide(title: "Schedule thrashing")[
-  - A lot of CPU cores (96) + a LOT of short-lived `Task`s = extreme slowdown in the scheduler
+  - A lot of CPU cores (96) + a LOT of short-lived `Task`s = slowdown in the scheduler
     - But isn't this really a coder error?
   - Easy to write naive code that experiences this anti-pattern
   - Can be hard to detect when testing on a laptop
