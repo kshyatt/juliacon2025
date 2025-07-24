@@ -2,7 +2,7 @@
 
 #show: typslides.with(
   ratio: "16-9",
-  theme: "bluey",
+  theme: "purply",
 )
 
 #front-slide(
