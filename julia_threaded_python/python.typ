@@ -1,4 +1,5 @@
 #import "@preview/typslides:1.2.5": *
+#import "@preview/cetz:0.4.1"
 
 #show: typslides.with(
   ratio: "16-9",
@@ -98,10 +99,48 @@
 ]
 
 #slide(title: "One possible solution")[
-  // TODO diagram
+  #cols(columns: (1fr, 1fr), gutter: 2em)[
+  #cetz.canvas({
+  import cetz.draw: *
+  rect((0, 10), (6, 4), fill: aqua)
+  content((0, 10.75), (6, 10.75), auto_scale: true, "Python process")
+  
+  rect((0.5, 6), (1.5, 7), fill: olive)
+  rect((2, 6), (3, 7), fill: olive)
+  rect((3.5, 6), (4.5, 7), fill: olive)
+  
+  rect((0.5, 7.5), (1.5, 8.5), fill: olive)
+  rect((2, 7.5), (3, 8.5), fill: olive)
+  rect((3.5, 7.5), (4.5, 8.5), fill: olive)
+  
+  rect((0.5, 4.5), (5.5, 5.5), fill: maroon)
+  content((1, 4.75), (5.5, 5.25), auto_scale: true, text(fill: white)[Julia process])
+  })
+  ][
+  #cetz.canvas({
+  import cetz.draw: *
+  rect((0, 4), (6, 10), fill: aqua)
+  content((0, 10.75), (6, 10.75), auto_scale: true, "Python process")
+  
+  rect((0.5, 6), (1.5, 7), fill: olive)
+  rect((2, 6), (3, 7), fill: olive)
+  rect((3.5, 6), (4.5, 7), fill: olive)
+  
+  rect((0.5, 7.5), (1.5, 8.5), fill: olive)
+  rect((2, 7.5), (3, 8.5), fill: olive)
+  rect((3.5, 7.5), (4.5, 8.5), fill: olive)
+  
+  line((6, 7), (7,7), mark: (start: "stealth", end: "stealth")) 
+  
+  rect((7, 4), (13, 10), fill: aqua)
+  content((7, 10.75), (13, 10.75), auto_scale: true, "Python process")
+  rect((7.5, 4.5), (12.5, 9.5), fill: maroon)
+  content((8, 7.5), (12.5, 7.5), auto_scale: true, text(fill: white)[Julia process])
+  })
+  ]
   - Manage threaded Julia code in a separate *process*, which is interacted with from the main Python wrapper thread
   - Can be done with `ProcessPoolExecutor` or `multiprocessing.Pool`
-  - Works *even if* we are launched by a non-main Python thread
+  - Works *even if* the wrapper module is imported by a non-main Python thread
 ]
 
 #slide(title: "One possible solution ... and its downsides")[
