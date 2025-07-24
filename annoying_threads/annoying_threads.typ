@@ -70,7 +70,7 @@
 ]
 
 #slide(title: "The closing " + `end` + " is missed by coverage")[
-  // TODO SCREENCAP OF COVERAGE
+  #image("coverage.png", width: 60%) 
   - This may be more of a coverage system problem but I encounter it when using `Threads`
   - It messes with my beautiful 100% coverage statistics for files
 ]
@@ -92,6 +92,7 @@
 
 #slide(title: "Things are getting better!")[
   - Scheduler slowdowns have improved (see Gabriel's talk!)
+  - A lot of unpleasant overhead is only encountered if you run a huge number (too many?) of `Task`s
   - We have an ecosystem of threading packages with friendly cooperation/competition
   - Good ideas can be taken from these other packages and incorporated into base's `Threads`
 ]
